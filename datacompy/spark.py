@@ -435,15 +435,15 @@ class SparkCompare:
                         [self._create_select_statement(name=column_name)]
                     )
             elif column_name in base_only:
-                select_statement = select_statement + ",".join(["A." + column_name])
+                select_statement = select_statement + ",".join(["A.`{}`".format(column_name)])
 
             elif column_name in compare_only:
                 if match_data:
-                    select_statement = select_statement + ",".join(["B." + column_name])
+                    select_statement = select_statement + ",".join(["B.`{}`".format(column_name)])
                 else:
-                    select_statement = select_statement + ",".join(["A." + column_name])
+                    select_statement = select_statement + ",".join(["A.`{}`".format(column_name)])
             elif column_name in self._join_column_names:
-                select_statement = select_statement + ",".join(["A." + column_name])
+                select_statement = select_statement + ",".join(["A.`{}`".format(column_name)])
 
             if column_name != sorted_list[-1]:
                 select_statement = select_statement + " , "
@@ -475,7 +475,7 @@ class SparkCompare:
     def _get_or_create_joined_dataframe(self) -> "pyspark.sql.DataFrame":
         if self._joined_dataframe is None:
             join_condition = " AND ".join(
-                ["A." + name + "<=>B." + name for name in self._join_column_names]
+                ["A.`{0}`<=>B.`{0}`".format(name) for name in self._join_column_names]
             )
             select_statement = self._generate_select_statement(match_data=True)
 
